@@ -15,7 +15,7 @@
     <loaderThreads>16</loaderThreads>
 
     <!-- The workload -->
-    <terminals>10</terminals>
+    <terminals>1</terminals>
     <works>
         <work>
             <time>300</time>
