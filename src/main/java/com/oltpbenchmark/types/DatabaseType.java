@@ -32,6 +32,7 @@ public enum DatabaseType {
     AMAZONRDS(true, false),
     CASSANDRA(true, true),
     COCKROACHDB(false, false),
+    TIDB(false, false),
     DB2(true, false),
     H2(true, false),
     HSQLDB(false, false),
