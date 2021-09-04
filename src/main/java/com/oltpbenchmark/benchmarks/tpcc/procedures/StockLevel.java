@@ -80,6 +80,7 @@ public class StockLevel extends TPCCProcedure {
                     throw new RuntimeException("D_W_ID=" + w_id + " D_ID=" + d_id + " not found!");
                 }
                 o_id = rs.getInt("D_NEXT_O_ID");
+                w.addSqlStmts(stockGetDistOrderIdSQL.getSQL());
             }
 
             stockGetCountStock.setInt(1, w_id);
@@ -108,6 +109,7 @@ public class StockLevel extends TPCCProcedure {
                 if (trace) {
                     LOG.trace("stockGetCountStock RESULT={}", stock_count);
                 }
+                w.addSqlStmts(stockGetCountStockSQL.getSQL());
 
             }
 

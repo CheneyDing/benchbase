@@ -100,10 +100,10 @@ public class OrderStatus extends TPCCProcedure {
 
                 // TODO: This only needs c_balance, c_first, c_middle, c_id
                 // only fetch those columns?
-                c = getCustomerByName(w_id, d_id, c_last, conn);
+                c = getCustomerByName(w_id, d_id, c_last, conn, w);
             } else {
 
-                c = getCustomerById(w_id, d_id, c_id, conn);
+                c = getCustomerById(w_id, d_id, c_id, conn, w);
             }
 
             // find the newest order for the customer
@@ -132,6 +132,7 @@ public class OrderStatus extends TPCCProcedure {
                 o_id = rs.getInt("O_ID");
                 o_carrier_id = rs.getInt("O_CARRIER_ID");
                 o_entry_d = rs.getTimestamp("O_ENTRY_D");
+                w.addSqlStmts(ordStatGetNewestOrdSQL.getSQL());
             }
 
             // retrieve the order lines for the most recent order
@@ -165,6 +166,7 @@ public class OrderStatus extends TPCCProcedure {
                     sb.append("]");
                     orderLines.add(sb.toString());
                 }
+                w.addSqlStmts(ordStatGetOrderLinesSQL.getSQL());
             }
 
 
@@ -227,7 +229,7 @@ public class OrderStatus extends TPCCProcedure {
 
     // attention duplicated code across trans... ok for now to maintain separate
     // prepared statements
-    public Customer getCustomerById(int c_w_id, int c_d_id, int c_id, Connection conn) throws SQLException {
+    public Customer getCustomerById(int c_w_id, int c_d_id, int c_id, Connection conn, TPCCWorker w) throws SQLException {
         boolean trace = LOG.isTraceEnabled();
 
         try (PreparedStatement payGetCust = this.getPreparedStatement(conn, payGetCustSQL)) {
@@ -250,6 +252,7 @@ public class OrderStatus extends TPCCProcedure {
                     }
                     throw new RuntimeException(msg);
                 }
+                w.addSqlStmts(payGetCustSQL.getSQL());
 
                 Customer c = TPCCUtil.newCustomerFromResults(rs);
                 c.c_id = c_id;
@@ -261,7 +264,7 @@ public class OrderStatus extends TPCCProcedure {
 
     // attention this code is repeated in other transacitons... ok for now to
     // allow for separate statements.
-    public Customer getCustomerByName(int c_w_id, int c_d_id, String c_last, Connection conn) throws SQLException {
+    public Customer getCustomerByName(int c_w_id, int c_d_id, String c_last, Connection conn, TPCCWorker w) throws SQLException {
         ArrayList<Customer> customers = new ArrayList<>();
         boolean trace = LOG.isDebugEnabled();
 
@@ -284,6 +287,7 @@ public class OrderStatus extends TPCCProcedure {
                     c.c_last = c_last;
                     customers.add(c);
                 }
+                w.addSqlStmts(customerByNameSQL.getSQL());
             }
         }
 

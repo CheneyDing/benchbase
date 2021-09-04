@@ -26,9 +26,11 @@ import com.oltpbenchmark.util.Histogram;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.sql.Array;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -54,6 +56,7 @@ public abstract class Worker<T extends BenchmarkModule> implements Runnable {
     protected final Map<TransactionType, Procedure> procedures = new HashMap<>();
     protected final Map<String, Procedure> name_procedures = new HashMap<>();
     protected final Map<Class<? extends Procedure>, Procedure> class_procedures = new HashMap<>();
+    protected final ArrayList<String> sqlStmts = new ArrayList<>();
 
     private final Histogram<TransactionType> txnUnknown = new Histogram<>();
     private final Histogram<TransactionType> txnSuccess = new Histogram<>();
@@ -126,6 +129,14 @@ public abstract class Worker<T extends BenchmarkModule> implements Runnable {
 
     public final Iterable<LatencyRecord.Sample> getLatencyRecords() {
         return latencies;
+    }
+
+    public final ArrayList<String> getSqlStmts() {
+        return sqlStmts;
+    }
+
+    public final void addSqlStmts(String s) {
+        sqlStmts.add(s);
     }
 
     public final Procedure getProcedure(TransactionType type) {

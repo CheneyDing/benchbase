@@ -132,14 +132,14 @@ public class NewOrder extends TPCCProcedure {
 
         newOrderTransaction(terminalWarehouseID, districtID,
                 customerID, numItems, allLocal, itemIDs,
-                supplierWarehouseIDs, orderQuantities, conn);
+                supplierWarehouseIDs, orderQuantities, conn, w);
 
     }
 
 
     private void newOrderTransaction(int w_id, int d_id, int c_id,
                                      int o_ol_cnt, int o_all_local, int[] itemIDs,
-                                     int[] supplierWarehouseIDs, int[] orderQuantities, Connection conn)
+                                     int[] supplierWarehouseIDs, int[] orderQuantities, Connection conn, TPCCWorker w)
             throws SQLException {
         float i_price;
         int d_next_o_id;
@@ -184,6 +184,7 @@ public class NewOrder extends TPCCProcedure {
                        throw new RuntimeException("C_D_ID=" + d_id
                                + " C_ID=" + c_id + " not found!");
                    }
+                   w.addSqlStmts(stmtGetCustSQL.getSQL());
                }
 
                stmtGetWhse.setInt(1, w_id);
@@ -191,6 +192,7 @@ public class NewOrder extends TPCCProcedure {
                    if (!rs.next()) {
                        throw new RuntimeException("W_ID=" + w_id + " not found!");
                    }
+                   w.addSqlStmts(stmtGetWhseSQL.getSQL());
                }
 
                stmtGetDist.setInt(1, w_id);
@@ -201,6 +203,7 @@ public class NewOrder extends TPCCProcedure {
                                + " not found!");
                    }
                    d_next_o_id = rs.getInt("D_NEXT_O_ID");
+                   w.addSqlStmts(stmtGetDistSQL.getSQL());
                }
 
                //woonhak, need to change order because of foreign key constraints
@@ -215,6 +218,7 @@ public class NewOrder extends TPCCProcedure {
                }
 
                o_id = d_next_o_id;
+               w.addSqlStmts(stmtUpdateDistSQL.getSQL());
 
                // woonhak, need to change order, because of foreign key constraints
                //[[insert ooder first
@@ -227,12 +231,14 @@ public class NewOrder extends TPCCProcedure {
                stmtInsertOOrder.setInt(7, o_all_local);
                stmtInsertOOrder.executeUpdate();
                //insert ooder first]]
+               w.addSqlStmts(stmtInsertOOrderSQL.getSQL());
                /*TODO: add error checking */
 
                stmtInsertNewOrder.setInt(1, o_id);
                stmtInsertNewOrder.setInt(2, d_id);
                stmtInsertNewOrder.setInt(3, w_id);
                stmtInsertNewOrder.executeUpdate();
+               w.addSqlStmts(stmtInsertNewOrderSQL.getSQL());
                /*TODO: add error checking */
 
 
@@ -251,6 +257,7 @@ public class NewOrder extends TPCCProcedure {
                        }
 
                        i_price = rs.getFloat("I_PRICE");
+                       w.addSqlStmts(stmtGetItemSQL.getSQL());
                    }
 
 
@@ -273,6 +280,7 @@ public class NewOrder extends TPCCProcedure {
                        s_dist_08 = rs.getString("S_DIST_08");
                        s_dist_09 = rs.getString("S_DIST_09");
                        s_dist_10 = rs.getString("S_DIST_10");
+                       w.addSqlStmts(stmtGetStockSQL.getSQL());
                    }
 
                    if (s_quantity - ol_quantity >= 10) {
@@ -345,7 +353,9 @@ public class NewOrder extends TPCCProcedure {
                }
 
                stmtInsertOrderLine.executeBatch();
+               w.addSqlStmts(stmtInsertOrderLineSQL.getSQL());
                stmtUpdateStock.executeBatch();
+               w.addSqlStmts(stmtUpdateStockSQL.getSQL());
 
            } finally {
                if (stmtInsertOrderLine != null) {

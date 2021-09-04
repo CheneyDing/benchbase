@@ -125,6 +125,7 @@ public class Delivery extends TPCCProcedure {
 
                     no_o_id = rs.getInt("NO_O_ID");
                     orderIDs[d_id - 1] = no_o_id;
+                    w.addSqlStmts(delivGetOrderIdSQL.getSQL());
                 }
 
                 delivDeleteNewOrder.setInt(1, no_o_id);
@@ -147,6 +148,7 @@ public class Delivery extends TPCCProcedure {
                             "[w_id=%d, d_id=%d, no_o_id=%d]", w_id, d_id, no_o_id);
                     throw new UserAbortException(msg);
                 }
+                w.addSqlStmts(delivDeleteNewOrderSQL.getSQL());
 
 
                 delivGetCustId.setInt(1, no_o_id);
@@ -169,6 +171,7 @@ public class Delivery extends TPCCProcedure {
                         throw new RuntimeException(msg);
                     }
                     c_id = rs.getInt("O_C_ID");
+                    w.addSqlStmts(delivGetCustIdSQL.getSQL());
                 }
 
                 delivUpdateCarrierId.setInt(1, o_carrier_id);
@@ -191,6 +194,7 @@ public class Delivery extends TPCCProcedure {
                     }
                     throw new RuntimeException(msg);
                 }
+                w.addSqlStmts(delivUpdateCarrierIdSQL.getSQL());
 
                 delivUpdateDeliveryDate.setTimestamp(1, timestamp);
                 delivUpdateDeliveryDate.setInt(2, no_o_id);
@@ -212,6 +216,7 @@ public class Delivery extends TPCCProcedure {
                     }
                     throw new RuntimeException(msg);
                 }
+                w.addSqlStmts(delivUpdateDeliveryDateSQL.getSQL());
 
 
                 delivSumOrderAmount.setInt(1, no_o_id);
@@ -234,6 +239,7 @@ public class Delivery extends TPCCProcedure {
                         throw new RuntimeException(msg);
                     }
                     ol_total = rs.getFloat("OL_TOTAL");
+                    w.addSqlStmts(delivSumOrderAmountSQL.getSQL());
                 }
 
                 int idx = 1; // HACK: So that we can debug this query
@@ -257,6 +263,7 @@ public class Delivery extends TPCCProcedure {
                     }
                     throw new RuntimeException(msg);
                 }
+                w.addSqlStmts(delivUpdateCustBalDelivCntSQL.getSQL());
             }
 
             if (trace) {
