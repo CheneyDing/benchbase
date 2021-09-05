@@ -18,6 +18,7 @@
 
 package com.oltpbenchmark;
 
+import com.mysql.cj.log.Log;
 import com.oltpbenchmark.api.BenchmarkModule;
 import com.oltpbenchmark.api.TransactionType;
 import com.oltpbenchmark.api.TransactionTypes;

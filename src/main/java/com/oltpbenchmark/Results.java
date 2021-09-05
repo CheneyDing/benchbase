@@ -33,7 +33,6 @@ public final class Results {
     private final long nanoseconds;
     private final int measuredRequests;
     private final DistributionStatistics distributionStatistics;
-    private final TFIDFStatistics tfidfStatistics;
     private final List<LatencyRecord.Sample> latencySamples;
     private final Histogram<TransactionType> unknown = new Histogram<>(false);
     private final Histogram<TransactionType> success = new Histogram<>(true);
@@ -43,12 +42,10 @@ public final class Results {
     private final Histogram<TransactionType> retryDifferent = new Histogram<>(false);
     private final Map<TransactionType, Histogram<String>> abortMessages = new HashMap<>();
 
-    public Results(long nanoseconds, int measuredRequests, DistributionStatistics distributionStatistics,
-                   TFIDFStatistics tfidfStatistics, final List<LatencyRecord.Sample> latencySamples) {
+    public Results(long nanoseconds, int measuredRequests, DistributionStatistics distributionStatistics, final List<LatencyRecord.Sample> latencySamples) {
         this.nanoseconds = nanoseconds;
         this.measuredRequests = measuredRequests;
         this.distributionStatistics = distributionStatistics;
-        this.tfidfStatistics = tfidfStatistics;
 
         if (distributionStatistics == null) {
 
@@ -63,8 +60,6 @@ public final class Results {
     public DistributionStatistics getDistributionStatistics() {
         return distributionStatistics;
     }
-
-    public TFIDFStatistics getTfidfStatistics() { return tfidfStatistics; }
 
     public Histogram<TransactionType> getSuccess() {
         return success;

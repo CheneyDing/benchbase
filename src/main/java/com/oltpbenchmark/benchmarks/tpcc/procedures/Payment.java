@@ -166,7 +166,7 @@ public class Payment extends TPCCProcedure {
             if (result == 0) {
                 throw new RuntimeException("W_ID=" + w_id + " not found!");
             }
-            w.addSqlStmts(payUpdateWhseSQL.getSQL());
+            w.writeSqlStmts(payUpdateWhseSQL.getSQL());
 
             payGetWhse.setInt(1, w_id);
             try (ResultSet rs = payGetWhse.executeQuery()) {
@@ -179,7 +179,7 @@ public class Payment extends TPCCProcedure {
                 w_state = rs.getString("W_STATE");
                 w_zip = rs.getString("W_ZIP");
                 w_name = rs.getString("W_NAME");
-                w.addSqlStmts(payGetWhseSQL.getSQL());
+                w.writeSqlStmts(payGetWhseSQL.getSQL());
             }
 
             payUpdateDist.setDouble(1, paymentAmount);
@@ -189,7 +189,7 @@ public class Payment extends TPCCProcedure {
             if (result == 0) {
                 throw new RuntimeException("D_ID=" + districtID + " D_W_ID=" + w_id + " not found!");
             }
-            w.addSqlStmts(payUpdateDistSQL.getSQL());
+            w.writeSqlStmts(payUpdateDistSQL.getSQL());
 
             payGetDist.setInt(1, w_id);
             payGetDist.setInt(2, districtID);
@@ -203,7 +203,7 @@ public class Payment extends TPCCProcedure {
                 d_state = rs.getString("D_STATE");
                 d_zip = rs.getString("D_ZIP");
                 d_name = rs.getString("D_NAME");
-                w.addSqlStmts(payGetDistSQL.getSQL());
+                w.writeSqlStmts(payGetDistSQL.getSQL());
             }
 
             Customer c;
@@ -228,7 +228,7 @@ public class Payment extends TPCCProcedure {
                         throw new RuntimeException("C_ID=" + c.c_id + " C_W_ID=" + customerWarehouseID + " C_D_ID=" + customerDistrictID + " not found!");
                     }
                     c_data = rs.getString("C_DATA");
-                    w.addSqlStmts(payGetCustCdataSQL.getSQL());
+                    w.writeSqlStmts(payGetCustCdataSQL.getSQL());
                 }
 
                 c_data = c.c_id + " " + customerDistrictID + " " + customerWarehouseID + " " + districtID + " " + w_id + " " + paymentAmount + " | " + c_data;
@@ -248,7 +248,7 @@ public class Payment extends TPCCProcedure {
                 if (result == 0) {
                     throw new RuntimeException("Error in PYMNT Txn updating Customer C_ID=" + c.c_id + " C_W_ID=" + customerWarehouseID + " C_D_ID=" + customerDistrictID);
                 }
-                w.addSqlStmts(payUpdateCustBalCdataSQL.getSQL());
+                w.writeSqlStmts(payUpdateCustBalCdataSQL.getSQL());
 
             } else { // GoodCredit
 
@@ -263,7 +263,7 @@ public class Payment extends TPCCProcedure {
                 if (result == 0) {
                     throw new RuntimeException("C_ID=" + c.c_id + " C_W_ID=" + customerWarehouseID + " C_D_ID=" + customerDistrictID + " not found!");
                 }
-                w.addSqlStmts(payUpdateCustBalSQL.getSQL());
+                w.writeSqlStmts(payUpdateCustBalSQL.getSQL());
 
             }
 
@@ -284,7 +284,7 @@ public class Payment extends TPCCProcedure {
             payInsertHist.setDouble(7, paymentAmount);
             payInsertHist.setString(8, h_data);
             payInsertHist.executeUpdate();
-            w.addSqlStmts(payInsertHistSQL.getSQL());
+            w.writeSqlStmts(payInsertHistSQL.getSQL());
 
             //conn.commit();
 
@@ -385,7 +385,7 @@ public class Payment extends TPCCProcedure {
                 if (!rs.next()) {
                     throw new RuntimeException("C_ID=" + c_id + " C_D_ID=" + c_d_id + " C_W_ID=" + c_w_id + " not found!");
                 }
-                w.addSqlStmts(payGetCustSQL.getSQL());
+                w.writeSqlStmts(payGetCustSQL.getSQL());
 
                 Customer c = TPCCUtil.newCustomerFromResults(rs);
                 c.c_id = c_id;
@@ -416,7 +416,7 @@ public class Payment extends TPCCProcedure {
                     c.c_last = customerLastName;
                     customers.add(c);
                 }
-                w.addSqlStmts(customerByNameSQL.getSQL());
+                w.writeSqlStmts(customerByNameSQL.getSQL());
             }
         }
 

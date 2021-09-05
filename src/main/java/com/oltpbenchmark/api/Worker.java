@@ -22,10 +22,14 @@ import com.oltpbenchmark.api.Procedure.UserAbortException;
 import com.oltpbenchmark.types.DatabaseType;
 import com.oltpbenchmark.types.State;
 import com.oltpbenchmark.types.TransactionStatus;
+import com.oltpbenchmark.util.FileUtil;
 import com.oltpbenchmark.util.Histogram;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.sql.Array;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -56,7 +60,6 @@ public abstract class Worker<T extends BenchmarkModule> implements Runnable {
     protected final Map<TransactionType, Procedure> procedures = new HashMap<>();
     protected final Map<String, Procedure> name_procedures = new HashMap<>();
     protected final Map<Class<? extends Procedure>, Procedure> class_procedures = new HashMap<>();
-    protected final ArrayList<String> sqlStmts = new ArrayList<>();
 
     private final Histogram<TransactionType> txnUnknown = new Histogram<>();
     private final Histogram<TransactionType> txnSuccess = new Histogram<>();
@@ -131,12 +134,18 @@ public abstract class Worker<T extends BenchmarkModule> implements Runnable {
         return latencies;
     }
 
-    public final ArrayList<String> getSqlStmts() {
-        return sqlStmts;
-    }
-
-    public final void addSqlStmts(String s) {
-        sqlStmts.add(s);
+    public final void writeSqlStmts(String s) {
+        try {
+            String outputDirectory = "results";
+            FileUtil.makeDirIfNotExists(outputDirectory);
+            String sqlFileName = "sqlStmts";
+            BufferedWriter out = new BufferedWriter(new FileWriter(FileUtil.joinPath(outputDirectory, sqlFileName), true));
+            out.write(s);
+            out.newLine();
+            out.close();
+        } catch (IOException e) {
+            LOG.error(e.getMessage());
+        }
     }
 
     public final Procedure getProcedure(TransactionType type) {

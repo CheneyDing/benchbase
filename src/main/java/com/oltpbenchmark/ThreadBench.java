@@ -287,13 +287,9 @@ public class ThreadBench implements Thread.UncaughtExceptionHandler {
 
             // Combine all the latencies together in the most disgusting way
             // possible: sorting!
-            ArrayList<String> aggSqlStmts = new ArrayList<>();
             for (Worker<?> w : workers) {
                 for (LatencyRecord.Sample sample : w.getLatencyRecords()) {
                     samples.add(sample);
-                }
-                for (String sqlStmts : w.getSqlStmts()) {
-                    aggSqlStmts.add(sqlStmts);
                 }
             }
             Collections.sort(samples);
@@ -304,9 +300,8 @@ public class ThreadBench implements Thread.UncaughtExceptionHandler {
                 latencies[i] = samples.get(i).latencyUs;
             }
             DistributionStatistics stats = DistributionStatistics.computeStatistics(latencies);
-            TFIDFStatistics tfidfStats = TFIDFStatistics.computeStatistics(aggSqlStmts);
 
-            Results results = new Results(measureEnd - start, requests, stats, tfidfStats, samples);
+            Results results = new Results(measureEnd - start, requests, stats, samples);
 
             // Compute transaction histogram
             Set<TransactionType> txnTypes = new HashSet<>();

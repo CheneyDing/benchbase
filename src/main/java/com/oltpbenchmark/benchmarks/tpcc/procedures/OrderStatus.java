@@ -132,7 +132,7 @@ public class OrderStatus extends TPCCProcedure {
                 o_id = rs.getInt("O_ID");
                 o_carrier_id = rs.getInt("O_CARRIER_ID");
                 o_entry_d = rs.getTimestamp("O_ENTRY_D");
-                w.addSqlStmts(ordStatGetNewestOrdSQL.getSQL());
+                w.writeSqlStmts(ordStatGetNewestOrdSQL.getSQL());
             }
 
             // retrieve the order lines for the most recent order
@@ -166,7 +166,7 @@ public class OrderStatus extends TPCCProcedure {
                     sb.append("]");
                     orderLines.add(sb.toString());
                 }
-                w.addSqlStmts(ordStatGetOrderLinesSQL.getSQL());
+                w.writeSqlStmts(ordStatGetOrderLinesSQL.getSQL());
             }
 
 
@@ -252,7 +252,7 @@ public class OrderStatus extends TPCCProcedure {
                     }
                     throw new RuntimeException(msg);
                 }
-                w.addSqlStmts(payGetCustSQL.getSQL());
+                w.writeSqlStmts(payGetCustSQL.getSQL());
 
                 Customer c = TPCCUtil.newCustomerFromResults(rs);
                 c.c_id = c_id;
@@ -287,7 +287,7 @@ public class OrderStatus extends TPCCProcedure {
                     c.c_last = c_last;
                     customers.add(c);
                 }
-                w.addSqlStmts(customerByNameSQL.getSQL());
+                w.writeSqlStmts(customerByNameSQL.getSQL());
             }
         }
 
